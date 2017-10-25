@@ -4,13 +4,13 @@ double dx = 1/(double)N;
 double dy = 1/(double)N;
 double dt;
 double c = 1;
-double b = 0;//.001;
+double b = .001;
 double[][] vals = new double[N][N];
 double[][] newvals = new double[N][N];
 double[][] oldvals = new double[N][N];
 
 double pressure(double t) {
-  return 0; //10000*cos(2*PI*(float)t*440);
+  return 100000*cos(3*2*PI*(float)t);
 }
 
 void deepcopy(double[][] src, double[][] dest) {
@@ -25,20 +25,19 @@ void setup() {
   double Cx = c*dt/dx;
   double Cy = c*dt/dy;
   println(sq((float)Cx)+sq((float)Cy));
-  frameRate(240);
-  print(frameRate);
+  frameRate(max(min((int)(1/dt),200), 60));
   size(1000,1000, P3D);
   smooth();
   for (int i=0; i<N; i++) {
     for (int j=0; j<N; j++) {
-      vals[i][j] = .5*exp(-.02*(pow((i-3*N/4),2) + pow((j-N/2),2))) + .5*exp(-.02*(pow((i-N/4),2) + pow((j-N/2),2)));
+      vals[i][j] = 0; //.5*exp(-.02*(pow((i-3*N/4),2) + pow((j-N/2),2))) + .5*exp(-.02*(pow((i-N/4),2) + pow((j-N/2),2)));
     }
   }
   deepcopy(vals, oldvals); //Enforce derivative at t=0 is 0
 }
  
 void draw() {
-  if (frameCount % 4 == 0) {
+  if (frameCount % 2 == 0) {
     background(255);
     //lights();
     translate(width/2,2*height/3,-width);
@@ -49,7 +48,7 @@ void draw() {
         float mapped = map((float)vals[i][j], -.1, .1, 0, 255);
         fill(mapped, 0, 255-mapped, .5*255);
         strokeWeight(1);
-        stroke(0);
+        stroke(255,200,0);
         //noStroke();
         if (i > 0 & j > 0) {
           beginShape();
@@ -83,6 +82,7 @@ void draw() {
   deepcopy(newvals, vals);
 
   t = t+dt;
+  fill(0);
   text((int)t + " seconds", 10, 10);
   text("c = " + c, 10, 25);
   text("dt = " + dt, 10, 40);
