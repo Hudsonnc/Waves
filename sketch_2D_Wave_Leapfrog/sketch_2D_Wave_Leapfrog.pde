@@ -1,16 +1,16 @@
-int N = 70;
+int N = 100;
 double t = 0;
 double dx = 1/(double)N;
 double dy = 1/(double)N;
-double dt;
-double c = 1;
-double b = .001;
+double dt = 1/240.0;
+double c = .1;
+double b = 0;
 double[][] vals = new double[N][N];
 double[][] newvals = new double[N][N];
 double[][] oldvals = new double[N][N];
 
 double pressure(double t) {
-  return 100000*cos(3*2*PI*(float)t);
+  return 50000*cos(5*2*PI*(float)t) + 50000*cos(2*2*PI*(float)t); //5000*cos(2*PI*(float)t) + 5000*cos((1+sqrt(5))/2*2*PI*(float)t);
 }
 
 void deepcopy(double[][] src, double[][] dest) {
@@ -20,17 +20,18 @@ void deepcopy(double[][] src, double[][] dest) {
 }
  
 void setup() {
-  dt = .1*1/c * 1/sqrt(1/sq((float)dx) + 1/sq((float)dy));
+  //dt = .1*1/c * 1/sqrt(1/sq((float)dx) + 1/sq((float)dy));
+  c = c*.9*1/dt * 1/sqrt(1/sq((float)dx) + 1/sq((float)dy));
   println(dt);
   double Cx = c*dt/dx;
   double Cy = c*dt/dy;
   println(sq((float)Cx)+sq((float)Cy));
-  frameRate(max(min((int)(1/dt),200), 60));
+  frameRate(240);
   size(1000,1000, P3D);
   smooth();
   for (int i=0; i<N; i++) {
     for (int j=0; j<N; j++) {
-      vals[i][j] = 0; //.5*exp(-.02*(pow((i-3*N/4),2) + pow((j-N/2),2))) + .5*exp(-.02*(pow((i-N/4),2) + pow((j-N/2),2)));
+      vals[i][j] = 0; //.5*exp(-.02*(pow(2*(i-3*N/4),2) + pow((j-N/2),2))) + .5*exp(-.02*(pow(2*(i-N/4),2) + pow((j-N/2),2)));
     }
   }
   deepcopy(vals, oldvals); //Enforce derivative at t=0 is 0
